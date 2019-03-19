@@ -1,6 +1,6 @@
-### Import CS Data files
-Player_data = open('Player_data.csv', 'r')
-Match_data = open('Match_data.csv', 'r')
+### Import two data files
+Player_data = open('Player_data.csv', 'r', encoding = 'utf-8')
+Match_data = open('Match_data.csv', 'r', encoding = 'utf-8')
 
 ### Read data from Player_data
 name = []
