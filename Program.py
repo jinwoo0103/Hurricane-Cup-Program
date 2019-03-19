@@ -70,11 +70,11 @@ m4.team.append(temp[7])
 m4.team.append(temp[8].strip('\n'))
 
 m1.time = (8,9)
-m1.place = "대운동장"
+m1.place = "B"
 m2.time = (9,10)
-m2.place = "대운동장"
+m2.place = "B"
 m3.time = (8,9)
-m3.place = "북측운동장"
+m3.place = "N"
 m4.time = (9,10)
-m4.place = "북측운동장"
+m4.place = "N"
 
