@@ -56,7 +56,7 @@ m4 = Match()
 
 m = [m1, m2, m3, m4]
 
-round = int(input("Please enter Round: "))
+round = int(input("Please Enter Round: "))
 for i in range(round):
     Match_data.readline()
 temp = Match_data.readline().split(',')
@@ -78,3 +78,53 @@ m3.place = "N"
 m4.time = (9,10)
 m4.place = "N"
 
+####################################################################################
+
+### Remember Time of 허리케인 Team
+for i in m:
+    if "허리케인A" in i.team:
+        time_A = i.time
+    if "허리케인B" in i.team:
+        time_B = i.time
+
+
+### Add players to match considering (th, _8_9, _9_10, team_schedule)
+for i in m:
+    for j in p:
+        if not False:  ## Do not consider injuries yet
+            if j.th == 32:
+                if ((i.time == (8,9) and j._8_9) or (i.time == (9,10) and j._9_10)): ## If time is okay
+                    if (j.team == "허리케인A" and i.time != time_A) or (j.team == "허리케인B" and i.time != time_B): ## If team schedule is okay
+                        i.main_ref.append(j)
+            elif j.th == 33:
+                if ((i.time == (8,9) and j._8_9) or (i.time == (9,10) and j._9_10)):
+                    if (j.team == "허리케인A" and i.time != time_A) or (j.team == "허리케인B" and i.time != time_B):
+                        i.assi_ref.append(j)
+            else:
+                if ((i.time == (8,9) and j._8_9) or (i.time == (9,10) and j._9_10)):
+                    if (j.team == "허리케인A" and i.time != time_A) or (j.team == "허리케인B" and i.time != time_B):
+                        if j.train_dept: ## only train_dept do those two.
+                            i.wait_ref.append(j)
+                            i.video.append(j)
+
+print ("")
+for i in m:
+    print (i.place, i.time)
+    print ("주심")
+    for j in i.main_ref:
+        print (j.name, j.team)
+    print ("")
+    print ("부심")
+    for j in i.assi_ref:
+        print (j.name, j.team)
+    print ("")
+    print ("대기심")
+    for j in i.wait_ref:
+        print (j.name, j.team)
+    print ("")
+    print ("촬영")
+    for j in i.video:
+        print (j.name, j.team)
+    print ("")
+
+print (time_A, time_B)
