@@ -10,20 +10,6 @@ def sort(li):
             if li[j].count > li[j+1].count:
                 li[j], li[j+1] = li[j+1], li[j]
 
-### Define function count_included: count how much the Player is included in
-def count_included(player):
-    result = 0
-    for i in m:
-        if player in i.main_ref:
-            result += 1
-        if player in i.assi_ref:
-            result += 1
-        if player in i.wait_ref:
-            result += 1
-        if player in i.video:
-            result += 1
-    return resul
-
 ### Define function find_delete: find where the player is included and delete all
 def find_delete(player):
     for i in m:
@@ -94,18 +80,27 @@ m4 = Match()
 
 m = [m1, m2, m3, m4]
 
-round = int(input("Please Enter Round: "))
-for i in range(round):
-    Match_data.readline()
+round = int(input("Please Enter Round (If it's playoff, then please add 21. For example, Playoff 1R is 22): "))
+if round <= 11:
+    for i in range(round):
+        Match_data.readline()
+else:
+    for i in range(round + 1):
+        Match_data.readline()
+    
 temp = Match_data.readline().split(',')
-m1.team.append(temp[1])
+if len(temp) < 10:
+    raise IndexError("There's no enough information about Round %d" % round)
+round_info = temp[0]
+date_info = temp[1]
 m1.team.append(temp[2])
-m2.team.append(temp[3])
+m1.team.append(temp[3])
 m2.team.append(temp[4])
-m3.team.append(temp[5])
+m2.team.append(temp[5])
 m3.team.append(temp[6])
-m4.team.append(temp[7])
-m4.team.append(temp[8].strip('\n'))
+m3.team.append(temp[7])
+m4.team.append(temp[8])
+m4.team.append(temp[9].strip('\n'))
 
 m1.time = (8,9)
 m1.place = "B"
@@ -115,6 +110,11 @@ m3.time = (8,9)
 m3.place = "N"
 m4.time = (9,10)
 m4.place = "N"
+
+### Make class OB
+class OB:
+    def __init__(self):
+        self.name = "OB"
 
 ####################################################################################
 
@@ -224,6 +224,7 @@ for i in m:
         for j in i.main_ref["Final"]:
             print (j.name, j.team)
     else:
+        i.main_ref["Final"].append(OB())
         print ("### Out of Stock!! Use OB!!")
     print ("")
     print ("부심")
@@ -233,10 +234,12 @@ for i in m:
     elif len(i.assi_ref["Final"]) == 1:
         for j in i.assi_ref["Final"]:
             print (j.name, j.team)
-            print ("### Out of Stock!! Use OB!!")
+        i.assi_ref["Final"].append(OB())
+        print ("### Out of Stock!! Use OB!!")
     else:
         for j in range(2):
-             print ("### Out of Stock!! Use OB!!")
+            i.assi_ref["Final"].append(OB())
+            print ("### Out of Stock!! Use OB!!")
              
     print ("")
     print ("대기심")
@@ -244,6 +247,7 @@ for i in m:
         for j in i.wait_ref["Final"]:
             print (j.name, j.team)
     else:
+        i.wait_ref["Final"].append(OB())
         print("### Out of Stock!! Use OB!!")
     print ("")
     if ("허리케인A" in i.team) or ("허리케인B" in i.team):
@@ -252,6 +256,54 @@ for i in m:
             for j in i.video["Final"]:
                 print (j.name, j.team)
         else:
-             print ("### Out of Stock!! Use Other 34th guys not in train_dept!!")
+            temp = OB()
+            temp.name = "다른 34기"
+            i.assi_ref["Final"].append(temp)
+            print ("### Out of Stock!! Use Other 34th guys not in train_dept!!")
         print ("")
 print("========================================")
+
+### Make csv style data in string
+line0 = ",," + round_info + "," + date_info + ",\n"
+line1 = ",,,,\n"
+line2 = ",대운,대운,북측,북측\n"
+line3 = "시간,8~9,9~10,8~9,9~10\n"
+line4 = "대진," + m1.team[0] + "," + m2.team[0] + "," + m3.team[0] + "," + m4.team[0] + "\n"
+line5 = "," + m1.team[1] + "," + m2.team[1] + "," + m3.team[1] + "," + m4.team[1] + "\n"
+line6 = ",,,,\n"
+line7 = "주심," + m1.main_ref["Final"][0].name + "," + m2.main_ref["Final"][0].name + "," + m3.main_ref["Final"][0].name + "," + m4.main_ref["Final"][0].name + "\n"
+line8 = "부심1," + m1.assi_ref["Final"][0].name + "," + m2.assi_ref["Final"][0].name + "," + m3.assi_ref["Final"][0].name + "," + m4.assi_ref["Final"][0].name + "\n"
+line9 = "부심2," + m1.assi_ref["Final"][1].name + "," + m2.assi_ref["Final"][1].name + "," + m3.assi_ref["Final"][1].name + "," + m4.assi_ref["Final"][1].name + "\n"
+line10 = "대기심," + m1.wait_ref["Final"][0].name + "," + m2.wait_ref["Final"][0].name + "," + m3.wait_ref["Final"][0].name + "," + m4.wait_ref["Final"][0].name + "\n"
+line11 = "영상,"
+if ("허리케인A" in m1.team) or ("허리케인B" in m1.team):
+    line11 += (m1.video["Final"][0].name + ",")
+else:
+    line11 += ","
+if ("허리케인A" in m2.team) or ("허리케인B" in m2.team):
+    line11 += (m2.video["Final"][0].name + ",")
+else:
+    line11 += ","
+if ("허리케인A" in m3.team) or ("허리케인B" in m3.team):
+    line11 += (m3.video["Final"][0].name + ",")
+else:
+    line11 += ","
+if ("허리케인A" in m4.team) or ("허리케인B" in m4.team):
+    line11 += (m4.video["Final"][0].name + "\n")
+else:
+    line11 += "\n"
+data = line0 + line1 + line2 + line3 + line4 + line5 + line6 + line7 + line8 + line9 + line10 + line11
+print(data)
+while True:
+    a = input("Do you want an excel file? (yes/no) : ")
+    if a == "yes":
+        filename = round_info + " (" + date_info + ") 심판 배정표.csv"
+        file = open(filename, 'w', encoding = 'ms949')
+        file.write(data)
+        file.close()
+        break
+    elif a == "no":
+        break
+    else:
+        pass
+
